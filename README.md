@@ -1,1 +1,1 @@
-# sata_attention
+# Symmetry-Aware Taylor Approximation of Attention
