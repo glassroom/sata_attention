@@ -2,7 +2,9 @@
 
 Proof-of-concept implementation of symmetry-aware Taylor-approximated attention, as proposed in "Self-Attention at Constant Cost per Token via Symmetry-Aware Taylor Expansion" (Heinsen and Kozachkov, 2026).
 
-We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, achieving orders-of-magnitude reductions in memory use and computation. Our work enables unbounded token generation at modest fixed cost, opening a new avenue for reducing the infrastructure and energy demands of large-scale Transformer models.
+We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, achieving orders-of-magnitude reductions in memory use and computation.
+
+Our work enables unbounded token generation at modest fixed cost, opening a new avenue for reducing the infrastructure and energy demands of large-scale Transformer models.
 
 
 ## Key Insight
@@ -18,7 +20,7 @@ $$
 \end{aligned}
 $$
 
-Previous efforts to approximate attention via Taylor expansion have stopped at the quadratic term (_i.e._, second order) due to the perceived complexity of evaluating all necessary polynomial interactions for higher-degree terms. As we show in our paper, each term in the Taylor expansion decomposes into an expression over symmetric chains of tensor products. For example, $(q^\top k)^3$ decomposes as follows:
+Previous efforts to approximate attention via Taylor expansion have stopped at the quadratic term (_i.e._, second order) due to the perceived complexity of evaluating all necessary polynomial interactions for higher-degree terms. As we show in our paper, each term in the Taylor expansion decomposes into an expression over symmetric chains of tensor products. For example, $(q^\top k)^3$ decomposes as:
 
 $$
 \begin{aligned}
@@ -38,22 +40,24 @@ where $\odot$ denotes elementwise (Hadamard) product and $\otimes$ denotes tenso
 ```python
 import torch
 
-d_key = 4
+d_key = 4  # toy example
 
 q = torch.randn(4)
 k = torch.randn(4)
 print((q @ k) ** 3)
 
-q_tensorprod_3_times = torch.einsum('i,j,k->ijk', q, q, q)
-k_tensorprod_3_times = torch.einsum('i,j,k->ijk', k, k, k)
+q_tensorprod_3_times = torch.einsum('i,j,k->ijk', q, q, q)  # shape is d_key x d_key x d_key
+k_tensorprod_3_times = torch.einsum('i,j,k->ijk', k, k, k)  # shape is d_key x d_key x d_key
 print(torch.sum(q_tensorprod_3_times * k_tensorprod_3_times))  # same output
 ```
 
-The $q^{\otimes 3}$ and $k^{\otimes 3}$ are _symmetric_, and their elementwise product, $\left( q^{\otimes 3} \right) \odot \left( k^{\otimes 3} \right) = (q \odot k)^{\otimes 3}$, is also a _symmetric_ tensor. As we explain in our paper, the upper hyper-triangular region of each of these symmetric tensors contains its unique elements (analogous to the upper triangular region of a symmetric matrix).
+The tensors $q^{\otimes 3}$ and $k^{\otimes 3}$ are _symmetric_, and their elementwise product, $\left( q^{\otimes 3} \right) \odot \left( k^{\otimes 3} \right) = \left( q \odot k \right)^{\otimes 3}$, is also _symmetric_. As we show in our paper, the upper hyper-triangular region of each of these symmetric tensors contains its unique elements (analogous to the upper triangular region of a symmetric matrix).
 
-By construction, $q^{\otimes 3}$ and $k^{\otimes 3}$ consist of all possible degree-3 monomials of $q$ and $p$, respectively, so their upper hyper-triangular region consists the unique monomials that make up the minimal basis for computing $(q^\top k)^3$. All monomials outside that region are permutations of a monomial in the region. The upper hyper-triangular region of an order-3 tensor is indexed by $i_1 \le i_2 \le i_3$, and consists of $m_3 = \binom{d_K + 3 - 1}{3}$ elements, significantly less than $d_K^3$ elements in the full tensor.
+By construction, $q^{\otimes 3}$ and $k^{\otimes 3}$ consist of all possible degree-3 monomials of $q$ and $p$, respectively, so their upper hyper-triangular region has the unique monomials that make up the _minimal basis_ for computing $(q^\top k)^3$. All monomials outside that region are permutations of a monomial in the region.
 
-Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, that maps queries and keys to the minimal basis for computing each term, reducing space and time costs by orders of magnitude compared to a naive evaluation over the full symmetric tensors:
+The upper hyper-triangular region of an order-3 tensor is indexed by $i_1 \le i_2 \le i_3$, and consists of $m_3 = \binom{d_K + 3 - 1}{3}$ elements, significantly fewer than $d_K \times d_K \times d_K = {d_K}^3$ elements in the full tensor.
+
+Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, that maps queries and keys to the minimal basis for computing each Taylor term, tightly packed in a vector, reducing space and time costs by orders of magnitude compared to a naive evaluation over the full symmetric tensors:
 
 ```python
 from itertools import combinations_with_replacement
@@ -62,8 +66,8 @@ from sata_attention import _calculate_n_idx_permutations
 p = 3  # order of tensors (degree of polynomials)
 
 # Constants (can be precomputed only once, in advance):
-M = torch.tensor([*combinations_with_replacement(range(d_key), p)])  # idxs to unique monomials
-C = _calculate_n_idx_permutations(M, d_key)                          # "counts" in full tensor
+M = torch.tensor([*combinations_with_replacement(range(d_key), p)])  # idxs to unique monoms
+C = _calculate_n_idx_permutations(M, d_key)                          # counts in full tensor
 
 def Phi(x): return x[..., M].prod(dim=-1)  # proposed feed-forward transformation
 
@@ -126,13 +130,13 @@ new_Q = torch.randn(1, d_key, device=DEVICE)
 new_K = torch.randn(1, d_key, device=DEVICE)
 new_V = torch.randn(1, d_val, device=DEVICE)
 
-Y = attn(new_Q, new_K, new_V, continue_prev=True)
+Y = attn(new_Q, new_K, new_V, continue_prev=True)  # constant cost per token
 ```
 
 
 ## Replicating Our Results
 
-We validate the correctness of our proof-of-concept implementation on sequences with up to 100M tokens. To replicate our results, install the dependencies listed in `requirements.txt` (e.g., `pip install -r requirements.txt`), and run the following from the command line:
+We validate the correctness of formulation by applying our proof-of-concept implementation to sequences with up to 100M tokens. To replicate our results, install the dependencies listed in `requirements.txt` (e.g., `pip install -r requirements.txt`), and run the following from the command line:
 
 ```
 python replicate_results.py
