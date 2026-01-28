@@ -55,7 +55,7 @@ The tensors $q^{\otimes 3}$ and $k^{\otimes 3}$ are _symmetric_, and their eleme
 
 By construction, $q^{\otimes 3}$ and $k^{\otimes 3}$ consist of all possible degree-3 monomials of $q$ and $p$, respectively, so their upper hyper-triangular region has the unique monomials that make up the _minimal basis_ for computing $(q^\top k)^3$. All monomials outside that region are permutations of a monomial in the region.
 
-The upper hyper-triangular region of an order-3 tensor is indexed by $i_1 \le i_2 \le i_3$, and consists of $m_3 = \binom{d_K + 3 - 1}{3}$ elements, significantly fewer than $d_K \times d_K \times d_K = {d_K}^3$ elements in the full tensor.
+The upper hyper-triangular region of an order-3 symmetric tensor is indexed by $i_1 \le i_2 \le i_3$, and consists of $m_3 = \binom{d_K + 3 - 1}{3}$ elements, significantly fewer than $d_K \times d_K \times d_K = {d_K}^3$ in the full tensor.
 
 Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, that maps queries and keys to the minimal basis for computing each Taylor term, tightly packed in a vector, reducing space and time costs by orders of magnitude compared to a naive evaluation over the full symmetric tensors:
 
