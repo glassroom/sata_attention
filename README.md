@@ -1,6 +1,8 @@
 # sata_attention
 
-Proof-of-concept implementation of symmetry-aware Taylor-approximated attention, as proposed in "Self-Attention at Constant Cost per Token via Symmetry-Aware Taylor Expansion" (Heinsen and Kozachkov, 2026). We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, achieving orders-of-magnitude reductions in memory use and computation. Our work enables unbounded token generation at modest fixed cost, opening a new avenue for reducing the infrastructure and energy demands of large-scale Transformer models.
+Proof-of-concept implementation of symmetry-aware Taylor-approximated attention, as proposed in "Self-Attention at Constant Cost per Token via Symmetry-Aware Taylor Expansion" (Heinsen and Kozachkov, 2026).
+
+We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, achieving orders-of-magnitude reductions in memory use and computation. Our work enables unbounded token generation at modest fixed cost, opening a new avenue for reducing the infrastructure and energy demands of large-scale Transformer models.
 
 
 ## Key Insight
@@ -12,6 +14,7 @@ $$
 \exp \left( \frac{q^\top k}{c} \right)
 & = 1 + \frac{q^\top k}{c} + \frac{1}{2!} \left( \frac{q^\top k}{c} \right)^2 + \frac{1}{3!} \left( \frac{q^\top k}{c} \right)^3 + \dots \\
 & = \sum_{p=0}^{\infty} \, \alpha_p \, (q^\top k)^p, \qquad \alpha_p := \frac{1}{p!\, c^p} \\
+\end{aligned}
 $$
 
 Previous efforts to approximate attention via Taylor expansion have stopped at the quadratic term (_i.e._, second order) due to the perceived complexity of evaluating all necessary polynomial interactions for higher-degree terms. As we show in our paper, each term in the Taylor expansion decomposes into an expression over symmetric chains of tensor products. For example, $(q^\top k)^3$ decomposes as follows:
