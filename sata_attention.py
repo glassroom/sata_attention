@@ -103,7 +103,7 @@ class TightlyPackedTaylorTerm(torch.nn.Module):
         return S_term, Z_term
 
 
-class ReformulatedAttention(torch.nn.Module):
+class SymmetryAwareTaylorApproximatedAttention(torch.nn.Module):
     """
     Proof-of-concept implementation of "Self-Attention at Constant Cost per
     Token via Symmetry-Aware Taylor Expansion," (Heinsen and Kozachkov, 2026).

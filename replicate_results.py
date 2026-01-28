@@ -11,7 +11,7 @@ import torch.nn.functional as F
 import torch.utils.benchmark
 
 from tqdm import tqdm
-from sata_attention import ReformulatedAttention
+from sata_attention import SymmetryAwareTaylorApproximatedAttention
 
 
 # Setup
@@ -78,7 +78,7 @@ def benchmark_hid_state_sz_vs_conventional():
     print('Evaluating sequences of up to 10**{:.0f} tokens.'.format(math.log10(max(N_TOK_LIST))))
     runs = []
     for d_head in D_HEAD_LIST:
-        new_attn = ReformulatedAttention(d_head, d_head, is_causal=False).eval()
+        new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=False).eval()
         for n_tok in tqdm(N_TOK_LIST, desc=f'd_head={d_head}'):
            runs.append({
                 'd_head': d_head,
@@ -106,7 +106,7 @@ def benchmark_flops_per_tok_vs_conventional():
     
     runs = []
     for d_head in D_HEAD_LIST:
-        new_attn = ReformulatedAttention(d_head, d_head, is_causal=False).to(device=DEVICE).eval()
+        new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=False).to(device=DEVICE).eval()
         for n_tok in tqdm(N_TOK_LIST, desc=f'd_head={d_head}'):
            runs.append({
                 'd_head': d_head,
@@ -124,7 +124,7 @@ def benchmark_hid_state_sz_and_flops_per_tok_for_multiple_heads():
     print('Evaluating embedding sizes up to 8192.')
     runs = []
     for d_head in np.arange(8, max(D_HEAD_LIST) + 1, 8):
-        new_attn = ReformulatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR).eval()
+        new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR).eval()
         _hid_sz_one_head = new_attn.get_hidden_state_sizes()['Total']
         _flops_one_head = new_attn.get_forward_FLOPs_per_query_head()['Total']
         for d_emb in tqdm(np.arange(1, 1 + 8192 // 1024) * 1024, desc=f'd_head={d_head}'):
@@ -158,7 +158,7 @@ def benchmark_mem_use_per_tok_vs_conventional():
     for d_head in D_HEAD_LIST:
 
         # Instantiate reformulated attention:
-        new_attn = ReformulatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR)
+        new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR)
         new_attn = torch.compile(new_attn, dynamic=True)
         new_attn.to(device=DEVICE).eval()
 
@@ -216,7 +216,7 @@ def benchmark_run_time_per_tok_vs_conventional():
     for d_head in D_HEAD_LIST:
 
         # Instantiate reformulated attention:
-        new_attn = ReformulatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR)
+        new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=False, n_taylor=DEFAULT_N_TAYLOR)
         if ESTIMATE_PARALLEL_RUN_TIME_FOR_TPTT_LAYERS:
             new_attn.tptts = new_attn.tptts[-1:]  # will execute only the slowest (highest-order) tptt layer
         new_attn = torch.compile(new_attn, dynamic=True)
@@ -278,7 +278,7 @@ def benchmark_reconstruction_error_vs_conventional():
         for n_taylor in N_TAYLOR_LIST_FOR_RECONSTRUCTION_ERROR:
 
             # Instantiate reformulated attention:
-            new_attn = ReformulatedAttention(d_head, d_head, is_causal=True, n_taylor=n_taylor)
+            new_attn = SymmetryAwareTaylorApproximatedAttention(d_head, d_head, is_causal=True, n_taylor=n_taylor)
             new_attn.to(device=DEVICE).eval()
 
             tgt_Y, new_Y = ([], [])
