@@ -50,11 +50,11 @@ Our key contribution is a maximally succinct, computationally efficient, and emb
 from itertools import combinations_with_replacement
 from sata_attention import _calculate_n_idx_permutations
 
-p = 3  # power/degree of Taylor term (order of symmetric tensor)
+p = 3
 
 # Constants (precomputed only once, in advance):
-M = torch.tensor([*combinations_with_replacement(range(d_key), p)])  # idxs to minimal basis
-C = _calculate_n_idx_permutations(M, d_key)                          # coefficients
+M = torch.tensor([*combinations_with_replacement(range(d_key), p)], dtype=torch.long)
+C = _calculate_n_idx_permutations(M, d_key)
 
 # Proposed feed-forward transformation:
 def Phi(x): return x[..., M].prod(dim=-1)
