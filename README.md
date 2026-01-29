@@ -71,7 +71,7 @@ This repository contains an implementation, along with code for verifying its co
 
 ## Proof of Concept
 
-_Our implementation is an initial one, and should properly be considered a proof of concept._ Unlike implementations of the conventional formulation of attention, which has now benefited from nearly a decade of performance optimization work by a large community of AI researchers and practitioners, our formulation is new and has yet to benefit from comparable long-term work.
+_Our implementation is an initial one, and should properly be considered a proof of concept, not fit for production._ Unlike implementations of the conventional formulation of attention, which has now benefited from nearly a decade of performance optimization work by a large community of AI researchers and practitioners, our formulation is new and has yet to benefit from comparable long-term work.
 
 Targets for performance optimization include:
 
