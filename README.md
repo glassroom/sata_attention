@@ -44,7 +44,7 @@ By construction, $q^{\otimes p}$ and $k^{\otimes p}$ consist of all possible deg
 
 The upper hyper-triangular region of an order $p$ symmetric tensor is indexed by $i_1 \le i_2 \le \dots \le i_p$, and consists of $m_p = \binom{d_K + p - 1}{p}$ elements, significantly fewer than ${d_K}^p$ in the full symmetric tensor.
 
-Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, implementing a feature map $\Phi: \mathbb{R}^{d_K} \to \mathbb{R}^{m_p}$, that takes a query or key as input and returns the monomials in the order $p$ upper hyper-triangular region of the associated symmetric tensor, _i.e._, the minimal basis, _tightly packed in a vector_. We can then weight each basis monomial by a coefficient, equal to the corresponding number of permutations in the full symmetric tensor:
+Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, implementing a feature map $\Phi: \mathbb{R}^{d_K} \to \mathbb{R}^{m_p}$, that takes a query or key as input and returns the monomials in the order $p$ upper hyper-triangular region of the associated symmetric tensor, _i.e._, the minimal basis, _tightly packed in a vector_. We can then weight each basis monomial by a coefficient, equal to the corresponding number of possible permutations:
 
 ```python
 from itertools import combinations_with_replacement
@@ -53,7 +53,7 @@ from sata_attention import _calculate_n_idx_permutations
 p = 3  # order of tensors (degree of Taylor term)
 
 # Constants (precomputed only once, in advance):
-M = torch.tensor([*combinations_with_replacement(range(d_key), p)])  # idxs to monomial basis
+M = torch.tensor([*combinations_with_replacement(range(d_key), p)])  # idxs to minimal basis
 C = _calculate_n_idx_permutations(M, d_key)                          # coefficients
 
 # Proposed feed-forward transformation:
