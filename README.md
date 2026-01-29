@@ -62,9 +62,11 @@ def Phi(x): return x[..., M].prod(dim=-1)
 torch.allclose((q @ k) ** p, (Phi(q) * Phi(k) * C).sum())  # True
 ```
 
-As we increase $p$, the space and time savings increase by orders of magnitude compared to a naive evaluation of the full symmetric tensors. Each row of constant matrix $M_p \in \mathbb{R}^{m_p \times p}$ (shown as `M` above) contains indices $i_1, i_2, \dots, i_p$, for $i_1 \le i_2 \le \dots \le i_p$ (_i.e._, indices to the upper hyper-triangular region), sorted in ascending order.
+Each row of matrix $M_p \in \mathbb{R}^{m_p \times p}$ (shown as `M` above) contains indices $i_1, i_2, \dots, i_p$, for $i_1 \le i_2 \le \dots \le i_p$ (_i.e._, indices to the upper hyper-triangular region of an order $p$ symmetric tensor), sorted in ascending order. As we increase $p$, the space and time savings grow by orders of magnitude compared to a naive evaluation with full symmetric tensors. 
 
-We show in our paper how to apply `Phi()` as a kernel function in a form of linear attention, incurring constant cost per token. Notably, space and time complexity becomes inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads. This repository contains an implementation, along with code for verifying its correctness.
+We show in our paper how to apply `Phi()` as a kernel function in a form of linear attention, incurring constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation of attention. Notably, space and time complexity becomes inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads.
+
+This repository contains an implementation, along with code for verifying its correctness.
 
 
 ## Proof of Concept
