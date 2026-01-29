@@ -27,7 +27,7 @@ where $\odot$ denotes elementwise (Hadamard) product, and $x^{\otimes p}$ denote
 ```python
 import torch
 
-d_key = 3                     # toy example
+d_key = 4                     # toy example
 q, k = torch.randn(2, d_key)  # key, query
 
 q_tensorprod_3_times = torch.einsum('i,j,k->ijk', q, q, q)  # symmetric
