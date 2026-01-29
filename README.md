@@ -2,7 +2,7 @@
 
 Reference implementation of **symmetry-aware Taylor-approximated attention**, as proposed in "[Self-Attention at Constant Cost per Token via Symmetry-Aware Taylor Expansion](paper.pdf)" (Heinsen and Kozachkov, 2026).
 
-We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation. Our work enables unbounded token generation at modest fixed cost, for substantially reducing the infrastructure and energy demands of large-scale Transformer models.
+We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, _achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation_. Our work enables unbounded token generation at modest fixed cost, for substantially reducing the infrastructure and energy demands of large-scale Transformer models.
 
 
 ## Key Insight
