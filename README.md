@@ -18,7 +18,11 @@ $$\begin{aligned}
 
 Previous efforts to approximate attention via Taylor expansion have stopped at the quadratic term ($p = 2$) due to the perceived complexity of evaluating all necessary polynomial interactions for higher-degree terms.
 
-In our paper, we show that each term $\left( q^\top k \right)^p$ in the Taylor expansion decomposes into an expression over symmetric chains of tensor products: $\left( q^\top k \right)^p = \sum \left( q^{\otimes p} \right) \odot \left( k^{\otimes p} \right)$, where $\odot$ denotes elementwise (Hadamard) product, and $x^{\otimes p}$ denotes tensor (outer) product of $x$ with itself $p$ times. For example, if $p = 3$, we have $\left( q^\top k \right)^3 = \sum \left( q^{\otimes 3} \right) \odot \left( k^{\otimes 3} \right) = \sum  (q \otimes q \otimes q) \odot (k \otimes k \otimes k)$:
+In our paper, we show that each term $\left( q^\top k \right)^p$ in the Taylor expansion decomposes into an expression over symmetric chains of tensor products:
+
+$$\left( q^\top k \right)^p = \sum \left( q^{\otimes p} \right) \odot \left( k^{\otimes p} \right)$$
+
+where $\odot$ denotes elementwise (Hadamard) product, and $x^{\otimes p}$ denotes tensor (outer) product of $x$ with itself $p$ times. For example, if $p = 3$, we have $\left( q^\top k \right)^3 = \sum \left( q^{\otimes 3} \right) \odot \left( k^{\otimes 3} \right) = \sum  (q \otimes q \otimes q) \odot (k \otimes k \otimes k)$:
 
 ```python
 import torch
