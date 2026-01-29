@@ -40,9 +40,9 @@ torch.allclose(
 
 The tensors $q^{\otimes p}$ and $k^{\otimes p}$ are _symmetric_, and their elementwise product, $\left( q^{\otimes p} \right) \odot \left( k^{\otimes p} \right) = \left( q \odot k \right)^{\otimes p}$, is also _symmetric_. As our paper explains, the upper hyper-triangular region of each of these symmetric tensors contains its unique elements (analogous to a symmetric matrix's upper triangular region).
 
-By construction, $q^{\otimes p}$ and $k^{\otimes p}$ consist of all possible degree-$p$ monomials of $q$ and $k$, respectively, so the upper hyper-triangular region of these tensors constains the unique monomials that make up the _minimal basis_ for computing $(q^\top k)^p$. All monomials outside that region are permutations of a monomial in the region.
+All monomials outside the upper hyper-triangular region are permutations of a monomial in the region. By construction, $q^{\otimes p}$ and $k^{\otimes p}$ consist of all possible degree $p$ monomials of $q$ and $k$, respectively, so the upper hyper-triangular regions of these tensors contain the unique monomials that make up the _minimal basis_ for computing $(q^\top k)^p$.
 
-The upper hyper-triangular region of an order-$p$ symmetric tensor is indexed by $i_1 \le i_2 \le \dots \le i_p$, and consists of $m_p = \binom{d_K + p - 1}{p}$ elements, significantly fewer than ${d_K}^p$ in the full symmetric tensor.
+The upper hyper-triangular region of an order $p$ symmetric tensor is indexed by $i_1 \le i_2 \le \dots \le i_p$, and consists of $m_p = \binom{d_K + p - 1}{p}$ elements, significantly fewer than ${d_K}^p$ in the full symmetric tensor.
 
 Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, implementing a feature map $\Phi: \mathbb{R}^{d_K} \to \mathbb{R}^{m_p}$, that maps a query or key to the monomials in the order-$p$ upper hyper-triangular region, _i.e._, the minimal basis, _tightly packed in a vector_. We can then weight each basis monomial by its coefficient, equal to the corresponding number of permutations in the full symmetric tensor:
 
