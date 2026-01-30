@@ -506,7 +506,6 @@ def generate_and_save_figs_reconstruction_error_vs_conventional(benchmark_data):
     )
     for axis, run in zip(axes.flatten(), runs):
         axis.set(title='Head Size: {}, Taylor Terms: {}'.format(run['d_head'], run['n_taylor']))
-        min_err = -15.0  # decimal orders of magnitude below min_err will be treated as min_err
         errs = (run['tgt_Y'] - run['new_Y']).abs().log10().maximum(finite_min_err)  # [n_heads, n_tok, d_head]
         errs = errs.movedim(-2, 0)  # [n_tok, n_heads, d_head]
         chunk_sz = 64  # will group tokens in chunks of this size for computing statistics
