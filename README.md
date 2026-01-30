@@ -4,9 +4,6 @@ Reference implementation of "[Self-Attention at Constant Cost per Token via Symm
 
 We show that scaled dot-product attention is efficiently computable to arbitrary precision at constant cost per token, _achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation_. Our work enables unbounded token generation at modest fixed cost, for substantially reducing the infrastructure and energy demands of large-scale Transformer models.
 
-![Symmetric tensors illustration](images/symmetric_tensors.png)
-
-
 
 ## Key Insight
 
@@ -43,7 +40,10 @@ The tensors $q^{\otimes p}$ and $k^{\otimes p}$ are _symmetric_, and their eleme
 
 By construction, $q^{\otimes p}$ and $k^{\otimes p}$ consist of all possible degree $p$ monomials combining elements of $q$ and $k$, respectively. Therefore, the upper hyper-triangular regions of these two symmetric tensors contain the unique monomials combining elements of $q$ and $k$, respectively, that make up the _minimal basis_ for computing $(q^\top k)^p$. _All monomials outside each upper hyper-triangular region are permutations of a monomial in the region._
 
-The upper hyper-triangular region of an order $p$ symmetric tensor is indexed by $i_1 \le i_2 \le \dots \le i_p$, and consists of $m_p = \binom{d_K + p - 1}{p}$ elements, significantly fewer than ${d_K}^p$ in the full symmetric tensor.
+The upper hyper-triangular region of an order $p$ symmetric tensor is indexed by $i_1 \le i_2 \le \dots \le i_p$, and consists of $m_p = \binom{d_K + p - 1}{p}$ elements, significantly fewer than ${d_K}^p$ in the full symmetric tensor. The following figure shows symmetric tensors of increasing order. The blue region in the rightmost plot is the upper hyper-triangular region, containing the minimal monomial basis for representing $\left( q^\top k \right)^p$:
+
+![Symmetric tensors illustration](images/symmetric_tensors.png)
+
 
 Our key contribution is a maximally succinct, computationally efficient, and embarrassingly parallel feed-forward transformation, shown as `Phi()` below, implementing a feature map $\Phi_p: \mathbb{R}^{d_K} \to \mathbb{R}^{m_p}$, that takes a query or key as input and returns the $m_p$ monomials in the upper hyper-triangular region of the associated symmetric tensor, _i.e._, the minimal basis, _tightly packed in a vector_. We can then weight each basis monomial by a coefficient, equal to the corresponding number of possible permutations:
 
