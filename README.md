@@ -65,7 +65,15 @@ torch.allclose((q @ k) ** p, (Phi(q) * Phi(k) * C).sum())  # True
 
 Each row of matrix $M_p \in \\{ 1, 2, \dots, d_K \\}^{m_p \times p}$ (`M`, above) contains the indices to the upper hyper-triangular region of an order $p$ symmetric tensor, sorted in ascending order. Each coefficient in $C_p$ (`C`, above) scales a monomial in the region. For $p = 0$, $M_0$ is an empty matrix, $C_0 = 1$, and $\Phi_0(\cdot) = 1$, which we handle as a special case in PyTorch. The space and time savings grow rapidly as we increase $p$.
 
-We show in our paper how to apply `Phi()` as the kernel function in a form of linear attention, incurring constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation of attention. Notably, space and time complexity become inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads.
+If we incorporate the coefficients into the feature map, we can express $\left( q^\top k \right)^p$ as a dot-product with PyTorch:
+
+```python
+sqrt_C = C.float().sqrt()
+def scaledPhi(x): return Phi(x) * sqrt_C
+torch.allclose((q @ k) ** p, scaledPhi(q) @ scaledPhi(k))  # True
+```
+
+In our paper, we show how to apply `Phi()` as the kernel function in a form of linear attention, incurring constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation of attention. Notably, space and time complexity become inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads.
 
 This repository contains an implementation, along with code for verifying its correctness.
 
