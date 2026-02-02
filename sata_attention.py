@@ -84,8 +84,8 @@ class TightlyPackedTaylorTerm(torch.nn.Module):
             H_S_summands = Phi_K[..., None] * V[..., None, :]                # [..., n_tok, m, d_val]
             H_Z_summands = Phi_K[..., None]                                  # [..., n_tok, m, 1]
     
-            H_S = self.acummulate(H_S_summands) * self.alpha                 # [..., (n_qry or 1), m, d_val]
-            H_Z = self.acummulate(H_Z_summands) * self.alpha                 # [..., (n_qry or 1), m, 1]
+            H_S = self.acummulate(H_S_summands) * self.alpha                 # [..., (n_qry=n_tok if causal, else 1), m, d_val]
+            H_Z = self.acummulate(H_Z_summands) * self.alpha                 # [..., (n_qry=n_tok if causal, else 1), m, 1]
     
             if continue_prev:
                 H_S = self.prev_H_S + H_S                                    # [..., (n_qry or 1), m, d_val]
