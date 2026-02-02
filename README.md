@@ -11,11 +11,11 @@ from sata_attention import SymmetryAwareTaylorApproximatedAttention
 
 DEVICE = 'cuda'             # change as needed
 n_tok = 1_000_000_000       # 1B tokens, no problem!
-n_head, d_head = (1048, 8)  # 1K small heads per oken, no problem!
+n_head, d_head = (1048, 8)  # 1K small heads per token, no problem!
+n_taylor = 8                # 8 Taylor terms, no problem!
 
 attn = SymmetryAwareTaylorApproximatedAttention(
-    d_key=d_head, d_val=d_head, is_causal=True, n_taylor=8)     # 8 Taylor terms, no problem!
-attn = attn.to(DEVICE)
+    d_key=d_head, d_val=d_head, is_causal=True, n_taylor=8).to(DEVICE)
 
 for tok_num in tqdm(range(n_tok)):
     q, k, v = torch.randn(3, n_head, 1, d_head, device=DEVICE)  # new query, key, value
