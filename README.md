@@ -19,7 +19,7 @@ attn = SymmetryAwareTaylorApproximatedAttention(
 
 for tok_num in tqdm(range(n_tok)):
     q, k, v = torch.randn(3, n_head, 1, d_head, device=DEVICE)  # new query, key, value
-    y = attn(q, k, v)                                           # attn over trailing toks
+    y = attn(q, k, v, continue_prev=tok_num > 0)                # attn over trailing toks
 ```
 
 Important: This implementation is an initial proof of concept lacking many optimizations. Its main purpose is to validate the correctness of our mathematical derivations. Please read on before using it.
