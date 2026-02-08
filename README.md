@@ -85,7 +85,7 @@ def Phi(x): return x[..., M].prod(dim=-1)
 torch.allclose((q @ k) ** p, (Phi(q) * Phi(k) * C).sum())  # True
 ```
 
-Each row of matrix $M_p \in \\{ 1, 2, \dots, d_K \\}^{m_p \times p}$ (`M`, above) contains the indices to the upper hyper-triangular region of an order $p$ symmetric tensor, sorted in ascending order. Each coefficient in $C_p$ (`C`, above) scales a monomial in the region. For $p = 0$, $M_0$ is an empty matrix, $C_0 = 1$, and $\Phi_0(\cdot) = 1$, which we handle as a special case in PyTorch. The space and time savings grow rapidly as we increase $p$.
+The rows of matrix $M_p \in \\{ 1, 2, \dots, d_K \\}^{m_p \times p}$ (`M`, above) contain the indices to the upper hyper-triangular region of an order $p$ symmetric tensor, sorted in ascending order. Each coefficient in $C_p$ (`C`, above) scales the corresponding monomial. For $p = 0$, $M_0$ is an empty matrix, $C_0 = 1$, and $\Phi_0(\cdot) = 1$, which we handle as a special case in PyTorch. The space and time savings grow rapidly as we increase $p$.
 
 If we incorporate the coefficients into the feature map, we can express $\left( q^\top k \right)^p$ as a dot-product with PyTorch:
 
