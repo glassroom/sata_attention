@@ -121,7 +121,7 @@ Targets for performance optimization include:
 
 Several directions for future work follow naturally. An important next step is to train Transformer models,
 end-to-end and via transfer learning, applying our formulation of attention, and evaluate downstream
-performance and convergence behavior. Ideally, such evaluations should include _new model configurations that compute attention over more heads than previously feasible_, by reducing the size of each head, because our formulation is most favorable to smaller heads. Performing such evaluations at any meaningful scale will require _development of fused hardware kernels that target the performance issues we mention above_.
+performance and convergence behavior. Ideally, such evaluations should include _new model configurations that compute attention over more heads than previously feasible_, by reducing the size of each head, because our formulation is most favorable to smaller heads. **Performing such evaluations at any meaningful scale will require _development of fused hardware kernels that target the performance issues we mention above_.**
 
 Further opportunities include compressing higher-order feature spaces and extending our approach to other analytic kernels beyond the exponential. More generally, our work enables exploration of new approaches to address the rising demand for storage, compute, and energy, driven by growing adoption of AI services.
 
