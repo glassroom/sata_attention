@@ -95,7 +95,7 @@ def scaledPhi(x): return Phi(x) * sqrt_C
 torch.allclose((q @ k) ** p, scaledPhi(q) @ scaledPhi(k))  # True
 ```
 
-In our paper, we show how to apply `Phi()` as the kernel function in a form of linear attention, incurring constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation of attention. Notably, space and time complexity become inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads.
+In our paper, we show how to apply `Phi()` to approximate scaled dot-product attention, incurring constant cost per token, achieving orders-of-magnitude reductions in memory use and computation compared to the conventional formulation of attention. Notably, space and time complexity become inversely proportional to head size, making it cheaper to apply attention over a larger number of smaller heads.
 
 This repository contains an implementation, along with code for verifying its correctness.
 
